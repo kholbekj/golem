@@ -6,13 +6,15 @@ require 'nokogiri'
 ##
 # Golem is a simple wrapper around the OpenAI API with convenience methods
 class Golem
+  attr_reader :client
+
   def initialize(api_key:)
     @api_key = api_key
+    @client = OpenAI::Client.new(access_token: @api_key)
   end
 
   def ask(question:)
-    client = OpenAI::Client.new(access_token: @api_key)
-    response = client.chat(
+    response = @client.chat(
       parameters: {
         model: 'gpt-3.5-turbo',
         messages: [{ role: 'user', content: question }]
