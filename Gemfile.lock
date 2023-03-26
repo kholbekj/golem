@@ -8,8 +8,10 @@ GEM
       multi_xml (>= 0.5.2)
     method_source (1.0.0)
     mini_mime (1.1.2)
+    mini_portile2 (2.8.1)
     multi_xml (0.6.0)
-    nokogiri (1.14.2-arm64-darwin)
+    nokogiri (1.14.2)
+      mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     pry (0.14.2)
       coderay (~> 1.1)
@@ -28,5 +30,8 @@ DEPENDENCIES
   pry
   ruby-openai
 
+RUBY VERSION
+   ruby 3.0.4p208
+
 BUNDLED WITH
-   2.1.4
+   2.2.33

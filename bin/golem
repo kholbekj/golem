@@ -1,8 +1,11 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
-require 'dotenv/load'
+require 'dotenv'
+
 require_relative '../lib/golem'
+
+Dotenv.load(File.expand_path(File.join(File.dirname(__FILE__), '..', '.env')))
 
 command = ARGV.shift
 golem = Golem.new(api_key: ENV['OPENAI_API_KEY'])
