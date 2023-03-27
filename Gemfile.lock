@@ -19,6 +19,7 @@ GEM
     racc (1.6.2)
     ruby-openai (3.7.0)
       httparty (>= 0.18.1)
+    tiktoken_ruby (0.0.3)
 
 PLATFORMS
   ruby
@@ -29,6 +30,7 @@ DEPENDENCIES
   nokogiri
   pry
   ruby-openai
+  tiktoken_ruby (~> 0.0.3)
 
 RUBY VERSION
    ruby 3.0.4p208

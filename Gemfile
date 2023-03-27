@@ -11,3 +11,5 @@ gem 'dotenv'
 gem 'httparty'
 gem 'pry'
 gem 'nokogiri'
+
+gem "tiktoken_ruby", "~> 0.0.3"
