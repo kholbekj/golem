@@ -14,12 +14,8 @@ class Golem
     @client = OpenAI::Client.new(access_token: @api_key)
   end
 
-  def ask(question:)
-    model = 'gpt-3.5-turbo'
-
-    enc = Tiktoken.encoding_for_model(model)
-    enc.encode(question).length
-    raise "Body too long: #{enc.encode(question).length} tokens" if enc.encode(question).length > 4097
+  def ask(question:, model: 'gpt-3.5-turbo')
+    check_length(question: question, model: model)
 
     response = @client.chat(
       parameters: {
@@ -29,24 +25,54 @@ class Golem
     )
     result = response.dig('choices', 0, 'message', 'content')
     result = response unless result && !result.empty?
-    puts result&.gsub('"',"\\\"")
+    puts result&.gsub('"', '\"')
   end
 
   def summarize_article(url:)
     page = HTTParty.get(url).body
     content = Nokogiri::HTML(page).text
     question = <<~QUESTION
-      Can you please summarize this html arcitle for me?
+      Can you please summarize this article for me?
       Start by saying the name of the source, then the title of the article, then the author if available.
       Explain key points, in one flowing paragraph.
 
       Source: #{url}
 
-      Article: 
+      Article:
 
       #{content}
     QUESTION
 
     ask(question: question)
+  end
+
+  def translate(text:)
+    question = <<~QUESTION
+      Can you please translate this text for me?
+      if it's english, to german, if german to english.
+
+      Slang is fine!
+      Don't explain anything.
+      For example:
+
+      "Hello, how are you?"
+
+      "Hallo, wie geht es dir?"
+
+      or another example:
+      "Ich bin ein Berliner"
+
+      "I am a Berliner"
+
+      #{text}
+    QUESTION
+
+    ask(question: question)
+  end
+
+  def check_length(question:, model:)
+    enc = Tiktoken.encoding_for_model(model)
+    enc.encode(question).length
+    raise "Body too long: #{enc.encode(question).length} tokens" if enc.encode(question).length > 4097
   end
 end

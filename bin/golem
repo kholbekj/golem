@@ -16,6 +16,8 @@ when "summarize"
   golem.summarize_article(url: ARGV[0].strip)
 when "console"
   binding.pry
+when "translate"
+  golem.translate(text: ARGV[0])
 else
   puts "Unknown command: #{command}"
   exit 1
