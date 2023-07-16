@@ -25,7 +25,9 @@ class Golem
     )
     result = response.dig('choices', 0, 'message', 'content')
     result = response unless result && !result.empty?
-    puts result&.gsub('"', '\"')
+    result = result&.gsub('"', '\"')
+    puts result
+    result
   end
 
   def summarize_article(url:)
