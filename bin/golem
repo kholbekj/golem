@@ -12,12 +12,20 @@ golem = Golem.new(api_key: ENV['OPENAI_API_KEY'])
 case command
 when "ask"
   golem.ask(question: ARGV[0])
+when "ask4"
+  golem.ask(question: ARGV[0], model: 'gpt-4')
 when "summarize"
   golem.summarize_article(url: ARGV[0].strip)
 when "console"
   binding.pry
 when "translate"
   golem.translate(text: ARGV[0])
+when "length"
+  puts golem.length(ARGV[0])
+when "price"
+  puts (golem.length(ARGV[0]) / 1000.0) * 0.0015
+when "price4"
+  puts (golem.length(ARGV[0]) / 1000.0) * 0.03
 else
   puts "Unknown command: #{command}"
   exit 1

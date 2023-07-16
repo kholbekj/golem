@@ -71,8 +71,12 @@ class Golem
   end
 
   def check_length(question:, model:)
-    enc = Tiktoken.encoding_for_model(model)
-    enc.encode(question).length
-    raise "Body too long: #{enc.encode(question).length} tokens" if enc.encode(question).length > 4097
+    length = length(question)
+    raise "Body too long: #{length} tokens" if length > 4097
+  end
+
+  def length(text)
+    enc = Tiktoken.encoding_for_model('gpt-3.5-turbo')
+    enc.encode(text).length
   end
 end
