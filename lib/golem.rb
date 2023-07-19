@@ -7,6 +7,7 @@ require 'tiktoken_ruby'
 ##
 # Golem is a simple wrapper around the OpenAI API with convenience methods
 class Golem
+  class TooLongException < StandardError; end
   attr_reader :client
 
   def initialize(api_key:)
@@ -74,7 +75,7 @@ class Golem
 
   def check_length(question:, model:)
     length = length(question)
-    raise "Body too long: #{length} tokens" if length > 4097
+    raise TooLongException, "Body too long: #{length} tokens" if length > 4097
   end
 
   def length(text)
