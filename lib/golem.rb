@@ -10,9 +10,9 @@ class Golem
   class TooLongException < StandardError; end
   attr_reader :client
 
-  def initialize(api_key:)
+  def initialize(api_key:, uri_base: nil)
     @api_key = api_key
-    @client = OpenAI::Client.new(access_token: @api_key)
+    @client = OpenAI::Client.new(uri_base: uri_base, access_token: @api_key)
   end
 
   def ask(question:, model: 'gpt-3.5-turbo')
@@ -48,6 +48,33 @@ class Golem
 
     ask(question: question)
   end
+
+  def image_url(prompt, model: 'dall-e-3')
+    if model == 'dall-e-3'
+      size = "1024x1792"
+    else
+      size = "1024x1024"
+    end
+    size = "1024x1024"
+    response = @client.images.generate(
+      parameters: {
+        model: model,
+        prompt: prompt,
+        size: size
+      }
+    )
+    if response.dig('data', 0, 'url').nil?
+      puts response
+      raise "No image generated"
+    end
+
+    [
+      response.dig('data', 0, 'url'),
+      response.dig('data', 0, 'revised_prompt')
+    ]
+  end
+      
+
 
   def translate(text:)
     question = <<~QUESTION

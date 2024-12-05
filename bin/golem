@@ -8,12 +8,18 @@ require_relative '../lib/golem'
 Dotenv.load(File.expand_path(File.join(File.dirname(__FILE__), '..', '.env')))
 
 command = ARGV.shift
-golem = Golem.new(api_key: ENV['OPENAI_API_KEY'])
+if command == "--local"
+  command = ARGV.shift
+  uri_base = "http://localhost:1234/"
+end
+golem = Golem.new(api_key: ENV['OPENAI_API_KEY'], uri_base: uri_base)
 case command
 when "ask"
   golem.ask(question: ARGV[0])
 when "ask4"
   golem.ask(question: ARGV[0], model: 'gpt-4')
+when "ask4p"
+  golem.ask(question: ARGV[0], model: 'gpt-4-1106-preview')
 when "summarize"
   golem.summarize_article(url: ARGV[0].strip)
 when "console"
@@ -26,6 +32,40 @@ when "price"
   puts (golem.length(ARGV[0]) / 1000.0) * 0.0015
 when "price4"
   puts (golem.length(ARGV[0]) / 1000.0) * 0.03
+when "img"
+  url = golem.image_url(ARGV[0]).first
+  puts url
+  `open "#{url}"`
+when "imgx"
+  ARGV[0].to_i.times do |i|
+    puts "Generating image #{i+1}/#{ARGV[0].to_i}"
+    url, prompt = golem.image_url(ARGV[1])
+
+    last_existing_file_number = Dir.glob("images/*.png").map { |f| f.split("/").last.split(".").first.to_i }.max || 0
+    img_filename = "images/#{last_existing_file_number + 1}.png"
+    File.open(img_filename, "wb") do |f|
+      f.write HTTParty.get(url).body
+    end
+
+    File.open("images/#{last_existing_file_number + 1}.txt", "w") do |f|
+      f.write prompt
+    end
+  end
+when "imgx2"
+  ARGV[0].to_i.times do |i|
+    puts "Generating image #{i+1}/#{ARGV[0].to_i}"
+    url, prompt = golem.image_url(ARGV[1], model: 'dall-e-2')
+
+    last_existing_file_number = Dir.glob("images/*.png").map { |f| f.split("/").last.split(".").first.to_i }.max || 0
+    img_filename = "images/#{last_existing_file_number + 1}.png"
+    File.open(img_filename, "wb") do |f|
+      f.write HTTParty.get(url).body
+    end
+
+    File.open("images/#{last_existing_file_number + 1}.txt", "w") do |f|
+      f.write prompt
+    end
+  end
 else
   puts "Unknown command: #{command}"
   exit 1
